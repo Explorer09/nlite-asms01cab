@@ -1,0 +1,2 @@
+IF NOT "%LANG%"=="FRA" GOTO :EOF
+SET LANGUAGE=French

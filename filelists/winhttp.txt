@@ -1,0 +1,12 @@
+amd64_Microsoft.Windows.WinHTTP_6595b64144ccf1df_5.1.3790.3959_x-ww_03ACA661\winhttp.dll
+manifests\amd64_Microsoft.Windows.WinHTTP_6595b64144ccf1df_5.1.3790.3959_x-ww_03ACA661.cat
+manifests\amd64_Microsoft.Windows.WinHTTP_6595b64144ccf1df_5.1.3790.3959_x-ww_03ACA661.manifest
+manifests\x86_Microsoft.Windows.WinHTTP_6595b64144ccf1df_5.1.3790.3959_x-ww_D1A2C081.cat
+manifests\x86_Microsoft.Windows.WinHTTP_6595b64144ccf1df_5.1.3790.3959_x-ww_D1A2C081.manifest
+x86_Microsoft.Windows.WinHTTP_6595b64144ccf1df_5.1.3790.3959_x-ww_D1A2C081\winhttp.dll
+policies\amd64_policy.5.1.Microsoft.Windows.WinHTTP_6595b64144ccf1df_x-ww_DD275069\5.1.3790.3959.cat
+policies\amd64_policy.5.1.Microsoft.Windows.WinHTTP_6595b64144ccf1df_x-ww_DD275069\5.1.3790.3959.policy
+policies\x86_policy.5.1.Microsoft.Windows.WinHTTP_6595b64144ccf1df_x-ww_7D68AE49\5.1.3790.3959.cat
+policies\x86_policy.5.1.Microsoft.Windows.WinHTTP_6595b64144ccf1df_x-ww_7D68AE49\5.1.3790.3959.policy
+setuppolicies\amd64_policy.5.1.Microsoft.Windows.WinHTTP_6595b64144ccf1df_x-ww_DD275069\5.1.3790.3959.policy
+setuppolicies\x86_policy.5.1.Microsoft.Windows.WinHTTP_6595b64144ccf1df_x-ww_7D68AE49\5.1.3790.3959.policy

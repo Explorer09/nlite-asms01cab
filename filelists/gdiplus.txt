@@ -1,0 +1,12 @@
+amd64_Microsoft.Windows.GdiPlus_6595b64144ccf1df_1.0.3790.3959_x-ww_B45BA3BE\GdiPlus.dll
+manifests\amd64_Microsoft.Windows.GdiPlus_6595b64144ccf1df_1.0.3790.3959_x-ww_B45BA3BE.cat
+manifests\amd64_Microsoft.Windows.GdiPlus_6595b64144ccf1df_1.0.3790.3959_x-ww_B45BA3BE.manifest
+manifests\x86_Microsoft.Windows.GdiPlus_6595b64144ccf1df_1.0.3790.3959_x-ww_8251BDDE.cat
+manifests\x86_Microsoft.Windows.GdiPlus_6595b64144ccf1df_1.0.3790.3959_x-ww_8251BDDE.manifest
+x86_Microsoft.Windows.GdiPlus_6595b64144ccf1df_1.0.3790.3959_x-ww_8251BDDE\GdiPlus.dll
+policies\amd64_policy.1.0.Microsoft.Windows.GdiPlus_6595b64144ccf1df_x-ww_AE43B2CC\5.1.3790.3959.cat
+policies\amd64_policy.1.0.Microsoft.Windows.GdiPlus_6595b64144ccf1df_x-ww_AE43B2CC\5.1.3790.3959.policy
+policies\x86_policy.1.0.Microsoft.Windows.GdiPlus_6595b64144ccf1df_x-ww_4E8510AC\5.1.3790.3959.cat
+policies\x86_policy.1.0.Microsoft.Windows.GdiPlus_6595b64144ccf1df_x-ww_4E8510AC\5.1.3790.3959.policy
+setuppolicies\amd64_policy.1.0.Microsoft.Windows.GdiPlus_6595b64144ccf1df_x-ww_AE43B2CC\5.1.3790.3959.policy
+setuppolicies\x86_policy.1.0.Microsoft.Windows.GdiPlus_6595b64144ccf1df_x-ww_4E8510AC\5.1.3790.3959.policy

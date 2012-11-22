@@ -1,0 +1,2 @@
+IF NOT "%LANG%"=="JPN" GOTO :EOF
+SET LANGUAGE=Japanese
