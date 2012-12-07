@@ -1,5 +1,5 @@
 @ECHO OFF
-SETLOCAL EnableExtensions
+SETLOCAL EnableExtensions EnableDelayedExpansion
 
 REM ---------------------------------------------------------------------------
 REM Copyright (C) 2012 Kang-Che Sung <explorer09 @ gmail.com>
@@ -38,7 +38,7 @@ SET hasWarnings=false
         ECHO Please edit set_global_vars.cmd and set the variable.
         SET hasErrors=true
     )
-    IF "%hasErrors%"=="true" (
+    IF "!hasErrors!"=="true" (
         GOTO error
     )
     ECHO ASMS01.cab update script for %OS_STRING_NLITE%
@@ -92,25 +92,25 @@ SET hasWarnings=false
             SET hasErrors=true
         )
     )
-    IF "%hasErrors%"=="true" (
+    IF "!hasErrors!"=="true" (
         GOTO error
     )
 
 :prompt
     SET /p prompt="Do you wish to keep the old files in ASMS01.CAB (recommended) [Y/n]? "
     SET keepOldFiles=YES
-    IF /I "%prompt%"=="N" SET keepOldFiles=NO
-    IF /I "%prompt%"=="NO" SET keepOldFiles=NO
-    IF "%keepOldFiles%"=="YES" (
+    IF /I "!prompt!"=="N" SET keepOldFiles=NO
+    IF /I "!prompt!"=="NO" SET keepOldFiles=NO
+    IF "!keepOldFiles!"=="YES" (
         ECHO Old files will be preserved.
     ) ELSE (
         ECHO Old files will be deleted.
     )
     SET /p prompt="Preserve the optional registry entries in the INI files (recommended) [Y/n]? "
     SET stripOptionalEntries=NO
-    IF /I "%prompt%"=="N" SET stripOptionalEntries=YES
-    IF /I "%prompt%"=="NO" SET stripOptionalEntries=YES
-    IF "%stripOptionalEntries%"=="NO" (
+    IF /I "!prompt!"=="N" SET stripOptionalEntries=YES
+    IF /I "!prompt!"=="NO" SET stripOptionalEntries=YES
+    IF "!stripOptionalEntries!"=="NO" (
         ECHO The optional registry entries will be preserved.
     ) ELSE (
         ECHO The optional registry entries will be stripped.
@@ -152,7 +152,7 @@ SET hasWarnings=false
 
     ECHO.
     ECHO Making directories...
-    IF "%hasComCtlUpdate%"=="true" (
+    IF "!hasComCtlUpdate!"=="true" (
         FOR %%d IN (
             addon_%COMCTL_UPDATE_ID%
             addon_%COMCTL_UPDATE_ID%\x64_i386
@@ -173,7 +173,7 @@ SET hasWarnings=false
             IF NOT EXIST %%d MKDIR %%d
         )
     )
-    IF "%hasGdiPlusUpdate%"=="true" (
+    IF "!hasGdiPlusUpdate!"=="true" (
         FOR %%d IN (
             addon_%GDIPLUS_UPDATE_ID%
             addon_%GDIPLUS_UPDATE_ID%\SVCPACK
@@ -187,7 +187,7 @@ SET hasWarnings=false
             IF NOT EXIST %%d MKDIR %%d
         )
     )
-    IF "%hasWinHttpUpdate%"=="true" (
+    IF "!hasWinHttpUpdate!"=="true" (
         FOR %%d IN (
             addon_%WINHTTP_UPDATE_ID%
             addon_%WINHTTP_UPDATE_ID%\SVCPACK
@@ -204,88 +204,88 @@ SET hasWarnings=false
 
     ECHO.
     ECHO Generating INI files for nLite addon...
-    IF "%hasComCtlUpdate%"=="true" (
+    IF "!hasComCtlUpdate!"=="true" (
         PUSHD ..\ini_maker >NUL
-        CALL write_entries_ini.cmd comctl %stripOptionalEntries%
+        CALL write_entries_ini.cmd comctl !stripOptionalEntries!
         POPD >NUL
     ) >entries_%COMCTL_UPDATE_ID%.ini
-    IF "%hasGdiPlusUpdate%"=="true" (
+    IF "!hasGdiPlusUpdate!"=="true" (
         PUSHD ..\ini_maker >NUL
-        CALL write_entries_ini.cmd gdiplus %stripOptionalEntries%
+        CALL write_entries_ini.cmd gdiplus !stripOptionalEntries!
         POPD >NUL
     ) >entries_%GDIPLUS_UPDATE_ID%.ini
-    IF "%hasWinHttpUpdate%"=="true" (
+    IF "!hasWinHttpUpdate!"=="true" (
         PUSHD ..\ini_maker >NUL
-        CALL write_entries_ini.cmd winhttp %stripOptionalEntries%
+        CALL write_entries_ini.cmd winhttp !stripOptionalEntries!
         POPD >NUL
     ) >entries_%WINHTTP_UPDATE_ID%.ini
 
     ECHO.
     ECHO Moving files...
-    IF "%hasComCtlUpdate%"=="true" (
+    IF "!hasComCtlUpdate!"=="true" (
         SET midPath=msft\windows\common\controls
-        MOVE SP2QFE\asms\582\%midPath%\comctl32.dll            WinSxS\%COMCTL5_MSFT_X64%\comctl32.dll
-        MOVE SP2QFE\asms\582\%midPath%\controls.cat            WinSxS\manifests\%COMCTL5_MSFT_X64%.cat
-        MOVE SP2QFE\asms\582\%midPath%\controls.man            WinSxS\manifests\%COMCTL5_MSFT_X64%.manifest
-        MOVE SP2QFE\asms\60\%midPath%\comctl32.dll             WinSxS\%COMCTL6_MSFT_X64%\comctl32.dll
-        MOVE SP2QFE\asms\60\%midPath%\controls.cat             WinSxS\manifests\%COMCTL6_MSFT_X64%.cat
-        MOVE SP2QFE\asms\60\%midPath%\controls.man             WinSxS\manifests\%COMCTL6_MSFT_X64%.manifest
-        MOVE SP2QFE\asms\x86\582\%midPath%\comctl32.dll        WinSxS\%COMCTL5_MSFT_X86%\comctl32.dll
-        MOVE SP2QFE\asms\x86\582\%midPath%\controls.cat        WinSxS\manifests\%COMCTL5_MSFT_X86%.cat
-        MOVE SP2QFE\asms\x86\582\%midPath%\controls.man        WinSxS\manifests\%COMCTL5_MSFT_X86%.manifest
-        MOVE SP2QFE\asms\x86\60\%midPath%\comctl32.dll         WinSxS\%COMCTL6_MSFT_X86%\comctl32.dll
-        MOVE SP2QFE\asms\x86\60\%midPath%\controls.cat         WinSxS\manifests\%COMCTL6_MSFT_X86%.cat
-        MOVE SP2QFE\asms\x86\60\%midPath%\controls.man         WinSxS\manifests\%COMCTL6_MSFT_X86%.manifest
-        COPY SP2QFE\asms\582\policy\%midPath%\controls.man     WinSxS\setuppolicies\%COMCTL5_POLICY_X64%\%COMCTL5_VERSION%.policy
-        COPY SP2QFE\asms\60\policy\%midPath%\controls.man      WinSxS\setuppolicies\%COMCTL6_POLICY_X64%\%COMCTL6_VERSION%.policy
-        COPY SP2QFE\asms\x86\582\policy\%midPath%\controls.man WinSxS\setuppolicies\%COMCTL5_POLICY_X86%\COMCTL5_VERSION%.policy
-        COPY SP2QFE\asms\x86\60\policy\%midPath%\controls.man  WinSxS\setuppolicies\%COMCTL6_POLICY_X86%\%COMCTL6_VERSION%.policy
-        MOVE SP2QFE\asms\582\policy\%midPath%\controls.cat     WinSxS\policies\%COMCTL5_POLICY_X64%\%COMCTL5_VERSION%.cat
-        MOVE SP2QFE\asms\582\policy\%midPath%\controls.man     WinSxS\policies\%COMCTL5_POLICY_X64%\%COMCTL5_VERSION%.policy
-        MOVE SP2QFE\asms\60\policy\%midPath%\controls.cat      WinSxS\policies\%COMCTL6_POLICY_X64%\%COMCTL6_VERSION%.cat
-        MOVE SP2QFE\asms\60\policy\%midPath%\controls.man      WinSxS\policies\%COMCTL6_POLICY_X64%\%COMCTL6_VERSION%.policy
-        MOVE SP2QFE\asms\x86\582\policy\%midPath%\controls.cat WinSxS\policies\%COMCTL5_POLICY_X86%\%COMCTL5_VERSION%.cat
-        MOVE SP2QFE\asms\x86\582\policy\%midPath%\controls.man WinSxS\policies\%COMCTL5_POLICY_X86%\%COMCTL5_VERSION%.policy
-        MOVE SP2QFE\asms\x86\60\policy\%midPath%\controls.cat  WinSxS\policies\%COMCTL6_POLICY_X86%\%COMCTL6_VERSION%.cat
-        MOVE SP2QFE\asms\x86\60\policy\%midPath%\controls.man  WinSxS\policies\%COMCTL6_POLICY_X86%\%COMCTL6_VERSION%.policy
+        MOVE SP2QFE\asms\582\!midPath!\comctl32.dll            WinSxS\%COMCTL5_MSFT_X64%\comctl32.dll
+        MOVE SP2QFE\asms\582\!midPath!\controls.cat            WinSxS\manifests\%COMCTL5_MSFT_X64%.cat
+        MOVE SP2QFE\asms\582\!midPath!\controls.man            WinSxS\manifests\%COMCTL5_MSFT_X64%.manifest
+        MOVE SP2QFE\asms\60\!midPath!\comctl32.dll             WinSxS\%COMCTL6_MSFT_X64%\comctl32.dll
+        MOVE SP2QFE\asms\60\!midPath!\controls.cat             WinSxS\manifests\%COMCTL6_MSFT_X64%.cat
+        MOVE SP2QFE\asms\60\!midPath!\controls.man             WinSxS\manifests\%COMCTL6_MSFT_X64%.manifest
+        MOVE SP2QFE\asms\x86\582\!midPath!\comctl32.dll        WinSxS\%COMCTL5_MSFT_X86%\comctl32.dll
+        MOVE SP2QFE\asms\x86\582\!midPath!\controls.cat        WinSxS\manifests\%COMCTL5_MSFT_X86%.cat
+        MOVE SP2QFE\asms\x86\582\!midPath!\controls.man        WinSxS\manifests\%COMCTL5_MSFT_X86%.manifest
+        MOVE SP2QFE\asms\x86\60\!midPath!\comctl32.dll         WinSxS\%COMCTL6_MSFT_X86%\comctl32.dll
+        MOVE SP2QFE\asms\x86\60\!midPath!\controls.cat         WinSxS\manifests\%COMCTL6_MSFT_X86%.cat
+        MOVE SP2QFE\asms\x86\60\!midPath!\controls.man         WinSxS\manifests\%COMCTL6_MSFT_X86%.manifest
+        COPY SP2QFE\asms\582\policy\!midPath!\controls.man     WinSxS\setuppolicies\%COMCTL5_POLICY_X64%\%COMCTL5_VERSION%.policy
+        COPY SP2QFE\asms\60\policy\!midPath!\controls.man      WinSxS\setuppolicies\%COMCTL6_POLICY_X64%\%COMCTL6_VERSION%.policy
+        COPY SP2QFE\asms\x86\582\policy\!midPath!\controls.man WinSxS\setuppolicies\%COMCTL5_POLICY_X86%\COMCTL5_VERSION%.policy
+        COPY SP2QFE\asms\x86\60\policy\!midPath!\controls.man  WinSxS\setuppolicies\%COMCTL6_POLICY_X86%\%COMCTL6_VERSION%.policy
+        MOVE SP2QFE\asms\582\policy\!midPath!\controls.cat     WinSxS\policies\%COMCTL5_POLICY_X64%\%COMCTL5_VERSION%.cat
+        MOVE SP2QFE\asms\582\policy\!midPath!\controls.man     WinSxS\policies\%COMCTL5_POLICY_X64%\%COMCTL5_VERSION%.policy
+        MOVE SP2QFE\asms\60\policy\!midPath!\controls.cat      WinSxS\policies\%COMCTL6_POLICY_X64%\%COMCTL6_VERSION%.cat
+        MOVE SP2QFE\asms\60\policy\!midPath!\controls.man      WinSxS\policies\%COMCTL6_POLICY_X64%\%COMCTL6_VERSION%.policy
+        MOVE SP2QFE\asms\x86\582\policy\!midPath!\controls.cat WinSxS\policies\%COMCTL5_POLICY_X86%\%COMCTL5_VERSION%.cat
+        MOVE SP2QFE\asms\x86\582\policy\!midPath!\controls.man WinSxS\policies\%COMCTL5_POLICY_X86%\%COMCTL5_VERSION%.policy
+        MOVE SP2QFE\asms\x86\60\policy\!midPath!\controls.cat  WinSxS\policies\%COMCTL6_POLICY_X86%\%COMCTL6_VERSION%.cat
+        MOVE SP2QFE\asms\x86\60\policy\!midPath!\controls.man  WinSxS\policies\%COMCTL6_POLICY_X86%\%COMCTL6_VERSION%.policy
         MOVE SP2QFE\wow\wcomctl32.dll                          addon_%COMCTL_UPDATE_ID%\x64_i386\wcomctl32.dll
         MOVE SP2QFE\comctl32.dll                               addon_%COMCTL_UPDATE_ID%\comctl32.dll
         MOVE update\%COMCTL_UPDATE_ID%.CAT                     addon_%COMCTL_UPDATE_ID%\SVCPACK\%COMCTL_UPDATE_ID%.cat
         MOVE entries_%COMCTL_UPDATE_ID%.ini                    addon_%COMCTL_UPDATE_ID%\entries_%COMCTL_UPDATE_ID%.ini
         SET midPath=
     )
-    IF "%hasGdiPlusUpdate%"=="true" (
+    IF "!hasGdiPlusUpdate!"=="true" (
         SET midPath=msft\windows\gdiplus
-        MOVE SP2QFE\asms\10\%midPath%\gdiplus.dll              WinSxS\%GDIPLUS_MSFT_X64%\GdiPlus.dll
-        MOVE SP2QFE\asms\10\%midPath%\gdiplus.cat              WinSxS\manifests\%GDIPLUS_MSFT_X64%.cat
-        MOVE SP2QFE\asms\10\%midPath%\gdiplus.man              WinSxS\manifests\%GDIPLUS_MSFT_X64%.manifest
-        MOVE SP2QFE\asms\x86\10\%midPath%\gdiplus.dll          WinSxS\%GDIPLUS_MSFT_X86%\GdiPlus.dll
-        MOVE SP2QFE\asms\x86\10\%midPath%\gdiplus.cat          WinSxS\manifests\%GDIPLUS_MSFT_X86%.cat
-        MOVE SP2QFE\asms\x86\10\%midPath%\gdiplus.man          WinSxS\manifests\%GDIPLUS_MSFT_X86%.manifest
-        COPY SP2QFE\asms\10\policy\%midPath%\gdiplus.man       WinSxS\setuppolicies\%GDIPLUS_POLICY_X64%\%GDIPLUS_VERSION%.policy
-        COPY SP2QFE\asms\x86\10\policy\%midPath%\gdiplus.man   WinSxS\setuppolicies\%GDIPLUS_POLICY_X86%\%GDIPLUS_VERSION%.policy
-        MOVE SP2QFE\asms\10\policy\%midPath%\gdiplus.cat       WinSxS\policies\%GDIPLUS_POLICY_X64%\%GDIPLUS_VERSION%.cat
-        MOVE SP2QFE\asms\10\policy\%midPath%\gdiplus.man       WinSxS\policies\%GDIPLUS_POLICY_X64%\%GDIPLUS_VERSION%.policy
-        MOVE SP2QFE\asms\x86\10\policy\%midPath%\gdiplus.cat   WinSxS\policies\%GDIPLUS_POLICY_X86%\%GDIPLUS_VERSION%.cat
-        MOVE SP2QFE\asms\x86\10\policy\%midPath%\gdiplus.man   WinSxS\policies\%GDIPLUS_POLICY_X86%\%GDIPLUS_VERSION%.policy
+        MOVE SP2QFE\asms\10\!midPath!\gdiplus.dll              WinSxS\%GDIPLUS_MSFT_X64%\GdiPlus.dll
+        MOVE SP2QFE\asms\10\!midPath!\gdiplus.cat              WinSxS\manifests\%GDIPLUS_MSFT_X64%.cat
+        MOVE SP2QFE\asms\10\!midPath!\gdiplus.man              WinSxS\manifests\%GDIPLUS_MSFT_X64%.manifest
+        MOVE SP2QFE\asms\x86\10\!midPath!\gdiplus.dll          WinSxS\%GDIPLUS_MSFT_X86%\GdiPlus.dll
+        MOVE SP2QFE\asms\x86\10\!midPath!\gdiplus.cat          WinSxS\manifests\%GDIPLUS_MSFT_X86%.cat
+        MOVE SP2QFE\asms\x86\10\!midPath!\gdiplus.man          WinSxS\manifests\%GDIPLUS_MSFT_X86%.manifest
+        COPY SP2QFE\asms\10\policy\!midPath!\gdiplus.man       WinSxS\setuppolicies\%GDIPLUS_POLICY_X64%\%GDIPLUS_VERSION%.policy
+        COPY SP2QFE\asms\x86\10\policy\!midPath!\gdiplus.man   WinSxS\setuppolicies\%GDIPLUS_POLICY_X86%\%GDIPLUS_VERSION%.policy
+        MOVE SP2QFE\asms\10\policy\!midPath!\gdiplus.cat       WinSxS\policies\%GDIPLUS_POLICY_X64%\%GDIPLUS_VERSION%.cat
+        MOVE SP2QFE\asms\10\policy\!midPath!\gdiplus.man       WinSxS\policies\%GDIPLUS_POLICY_X64%\%GDIPLUS_VERSION%.policy
+        MOVE SP2QFE\asms\x86\10\policy\!midPath!\gdiplus.cat   WinSxS\policies\%GDIPLUS_POLICY_X86%\%GDIPLUS_VERSION%.cat
+        MOVE SP2QFE\asms\x86\10\policy\!midPath!\gdiplus.man   WinSxS\policies\%GDIPLUS_POLICY_X86%\%GDIPLUS_VERSION%.policy
         MOVE update\%GDIPLUS_UPDATE_ID%.CAT                    addon_%GDIPLUS_UPDATE_ID%\SVCPACK\%GDIPLUS_UPDATE_ID%.cat
         MOVE entries_%GDIPLUS_UPDATE_ID%.ini                   addon_%GDIPLUS_UPDATE_ID%\entries_%GDIPLUS_UPDATE_ID%.ini
         SET midPath=
     )
-    IF "%hasWinHttpUpdate%"=="true" (
+    IF "!hasWinHttpUpdate!"=="true" (
         SET midPath=msft\windows\winhttp
-        MOVE SP2QFE\asms\51\%midPath%\winhttp.dll              WinSxS\%WINHTTP_MSFT_X64%\winhttp.dll
-        MOVE SP2QFE\asms\51\%midPath%\winhttp.cat              WinSxS\manifests\%WINHTTP_MSFT_X64%.cat
-        MOVE SP2QFE\asms\51\%midPath%\winhttp.man              WinSxS\manifests\%WINHTTP_MSFT_X64%.manifest
-        MOVE SP2QFE\asms\x86\51\%midPath%\winhttp.dll          WinSxS\%WINHTTP_MSFT_X86%\winhttp.dll
-        MOVE SP2QFE\asms\x86\51\%midPath%\winhttp.cat          WinSxS\manifests\%WINHTTP_MSFT_X86%.cat
-        MOVE SP2QFE\asms\x86\51\%midPath%\winhttp.man          WinSxS\manifests\%WINHTTP_MSFT_X86%.manifest
-        COPY SP2QFE\asms\51\policy\%midPath%\winhttp.man       WinSxS\setuppolicies\%WINHTTP_POLICY_X64%\%WINHTTP_VERSION%.policy
-        COPY SP2QFE\asms\x86\51\policy\%midPath%\winhttp.man   WinSxS\setuppolicies\%WINHTTP_POLICY_X86%\%WINHTTP_VERSION%.policy
-        MOVE SP2QFE\asms\51\policy\%midPath%\winhttp.cat       WinSxS\policies\%WINHTTP_POLICY_X64%\%WINHTTP_VERSION%.cat
-        MOVE SP2QFE\asms\51\policy\%midPath%\winhttp.man       WinSxS\policies\%WINHTTP_POLICY_X64%\%WINHTTP_VERSION%.policy
-        MOVE SP2QFE\asms\x86\51\policy\%midPath%\winhttp.cat   WinSxS\policies\%WINHTTP_POLICY_X86%\%WINHTTP_VERSION%.cat
-        MOVE SP2QFE\asms\x86\51\policy\%midPath%\winhttp.man   WinSxS\policies\%WINHTTP_POLICY_X86%\%WINHTTP_VERSION%.policy
+        MOVE SP2QFE\asms\51\!midPath!\winhttp.dll              WinSxS\%WINHTTP_MSFT_X64%\winhttp.dll
+        MOVE SP2QFE\asms\51\!midPath!\winhttp.cat              WinSxS\manifests\%WINHTTP_MSFT_X64%.cat
+        MOVE SP2QFE\asms\51\!midPath!\winhttp.man              WinSxS\manifests\%WINHTTP_MSFT_X64%.manifest
+        MOVE SP2QFE\asms\x86\51\!midPath!\winhttp.dll          WinSxS\%WINHTTP_MSFT_X86%\winhttp.dll
+        MOVE SP2QFE\asms\x86\51\!midPath!\winhttp.cat          WinSxS\manifests\%WINHTTP_MSFT_X86%.cat
+        MOVE SP2QFE\asms\x86\51\!midPath!\winhttp.man          WinSxS\manifests\%WINHTTP_MSFT_X86%.manifest
+        COPY SP2QFE\asms\51\policy\!midPath!\winhttp.man       WinSxS\setuppolicies\%WINHTTP_POLICY_X64%\%WINHTTP_VERSION%.policy
+        COPY SP2QFE\asms\x86\51\policy\!midPath!\winhttp.man   WinSxS\setuppolicies\%WINHTTP_POLICY_X86%\%WINHTTP_VERSION%.policy
+        MOVE SP2QFE\asms\51\policy\!midPath!\winhttp.cat       WinSxS\policies\%WINHTTP_POLICY_X64%\%WINHTTP_VERSION%.cat
+        MOVE SP2QFE\asms\51\policy\!midPath!\winhttp.man       WinSxS\policies\%WINHTTP_POLICY_X64%\%WINHTTP_VERSION%.policy
+        MOVE SP2QFE\asms\x86\51\policy\!midPath!\winhttp.cat   WinSxS\policies\%WINHTTP_POLICY_X86%\%WINHTTP_VERSION%.cat
+        MOVE SP2QFE\asms\x86\51\policy\!midPath!\winhttp.man   WinSxS\policies\%WINHTTP_POLICY_X86%\%WINHTTP_VERSION%.policy
         MOVE update\%WINHTTP_UPDATE_ID%.CAT                    addon_%WINHTTP_UPDATE_ID%\SVCPACK\%WINHTTP_UPDATE_ID%.cat
         MOVE entries_%WINHTTP_UPDATE_ID%.ini                   addon_%WINHTTP_UPDATE_ID%\entries_%WINHTTP_UPDATE_ID%.ini
         SET midPath=
@@ -295,8 +295,8 @@ SET hasWarnings=false
     ECHO Generating file lists...
     TYPE ..\filelists\%LANG%\asms01.txt >asms01.list
 
-    IF "%hasComCtlUpdate%"=="true" (
-        IF "%keepOldFiles%"=="YES" (
+    IF "!hasComCtlUpdate!"=="true" (
+        IF "!keepOldFiles!"=="YES" (
             TYPE ..\filelists\comctl.txt
         )>>asms01.list
         (
@@ -334,8 +334,8 @@ SET hasWarnings=false
     ) ELSE (
         TYPE ..\filelists\comctl.txt >>asms01.list
     )
-    IF "%hasGdiPlusUpdate%"=="true" (
-        IF "%keepOldFiles%"=="YES" (
+    IF "!hasGdiPlusUpdate!"=="true" (
+        IF "!keepOldFiles!"=="YES" (
             TYPE ..\filelists\gdiplus.txt
         )>>asms01.list
         (
@@ -359,8 +359,8 @@ SET hasWarnings=false
     ) ELSE (
         TYPE ..\filelists\gdiplus.txt >>asms01.list
     )
-    IF "%hasWinHttpUpdate%"=="true" (
-        IF "%keepOldFiles%"=="YES" (
+    IF "!hasWinHttpUpdate!"=="true" (
+        IF "!keepOldFiles!"=="YES" (
             TYPE ..\filelists\winhttp.txt
         )>>asms01.list
         (
@@ -394,19 +394,19 @@ SET hasWarnings=false
         ..\..\cabarc -p -m MSZip N ..\..\ASMS01_new.cab @..\asms01.list
         CD ..
     )
-    IF "%hasComCtlUpdate%"=="true" (
+    IF "!hasComCtlUpdate!"=="true" (
         CD addon_%COMCTL_UPDATE_ID%
         CALL :stripMissingFiles ..\addon_%COMCTL_UPDATE_ID%.list ..\temp.list
         ..\..\cabarc -p -m MSZip N ..\..\addon_%COMCTL_UPDATE_ID%.cab @..\addon_%COMCTL_UPDATE_ID%.list
         CD ..
     )
-    IF "%hasGdiPlusUpdate%"=="true" (
+    IF "!hasGdiPlusUpdate!"=="true" (
         CD addon_%GDIPLUS_UPDATE_ID%
         CALL :stripMissingFiles ..\addon_%GDIPLUS_UPDATE_ID%.list ..\temp.list
         ..\..\cabarc -p -m MSZip N ..\..\addon_%GDIPLUS_UPDATE_ID%.cab @..\addon_%GDIPLUS_UPDATE_ID%.list
         CD ..
     )
-    IF "%hasWinHttpUpdate%"=="true" (
+    IF "!hasWinHttpUpdate!"=="true" (
         CD addon_%WINHTTP_UPDATE_ID%
         CALL :stripMissingFiles ..\addon_%WINHTTP_UPDATE_ID%.list ..\temp.list
         ..\..\cabarc -p -m MSZip N ..\..\addon_%WINHTTP_UPDATE_ID%.cab @..\addon_%WINHTTP_UPDATE_ID%.list
@@ -424,7 +424,7 @@ GOTO finished
 
 :finished
     CLS
-    IF "%hasWarnings%"=="true" (
+    IF "!hasWarnings!"=="true" (
         ECHO.
         ECHO There are warnings during the process.
     )
@@ -435,13 +435,13 @@ GOTO finished
     ECHO 1. Replace the "AMD64\ASMS01.CAB" located in your %OS_STRING_NLITE%
     ECHO    disc with the new "ASMS01_new.cab". (Rename to ASMS01.CAB when needed.)
     ECHO 2. Open nLite, and integrate these addons:
-    IF "%hasComCtlUpdate%"=="true" (
+    IF "!hasComCtlUpdate!"=="true" (
         ECHO    - addon_%COMCTL_UPDATE_ID%.cab
     )
-    IF "%hasGdiPlusUpdate%"=="true" (
+    IF "!hasGdiPlusUpdate!"=="true" (
         ECHO    - addon_%GDIPLUS_UPDATE_ID%.cab
     )
-    IF "%hasWinHttpUpdate%"=="true" (
+    IF "!hasWinHttpUpdate!"=="true" (
         ECHO    - addon_%WINHTTP_UPDATE_ID%.cab
     )
     ECHO 3. Enjoy your slipstreamed disc.
