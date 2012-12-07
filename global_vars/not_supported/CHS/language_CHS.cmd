@@ -1,2 +1,3 @@
 IF NOT "%LANG%"=="CHS" GOTO :EOF
 SET LANGUAGE=Chinese (Simplified)
+SET DOS_CODEPAGE=936

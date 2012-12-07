@@ -1,2 +1,3 @@
 IF NOT "%LANG%"=="PTB" GOTO :EOF
 SET LANGUAGE=Portuguese (Brazil)
+SET DOS_CODEPAGE=850
