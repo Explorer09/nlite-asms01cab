@@ -96,6 +96,30 @@ SET hasWarnings=false
         GOTO error
     )
 
+:codePageCheck
+    REM Command substitution in cmd.exe
+    FOR /F "delims=" %%n IN ('chcp') DO (
+        SET activeCodePage=%%n
+    )
+    SET activeCodePage=!activeCodePage:~-3,3!
+    IF NOT "!activeCodePage!"=="%DOS_CODEPAGE%" (
+        SET hasWarnings=true
+        ECHO WARNING: Your active code page ^(!activeCodePage!^) does not match the recommended code page
+        ECHO for your language ^(%DOS_CODEPAGE%^).
+        ECHO.
+        ECHO This means that your current locale setting might not be suitable for
+        ECHO slipstreaming a %LANGUAGE% version of Windows.
+        ECHO Please go to "Control Panel" -^> "Regional and Language Options", click the
+        ECHO "Advanced" tab, and use the drop-down in "Language for non-Unicode programs"
+        ECHO to adjust the system locale.
+        ECHO.
+        ECHO If you continue, there might be some localized strings in the nLite addons that
+        ECHO are not written correctly, or contain invalid characters. ^(This will affect
+        ECHO some registry entries in the target OS, but the OS will still work.^)
+        ECHO.
+        PAUSE
+    )
+
 :prompt
     SET /p prompt="Do you wish to keep the old files in ASMS01.CAB (recommended) [Y/n]? "
     SET keepOldFiles=YES
