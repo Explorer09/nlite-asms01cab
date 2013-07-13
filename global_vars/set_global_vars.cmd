@@ -11,7 +11,7 @@ SET OS_TAG=NOT_SET_YET
 
 REM The KB identifiers of the updates.
 SET COMCTL_UPDATE_ID=KB2296011
-SET GDIPLUS_UPDATE_ID=KB2659262
+SET GDIPLUS_UPDATE_ID=KB2834886
 SET WINHTTP_UPDATE_ID=KB2638806
 
 REM -------------------------------------------------------------------------
