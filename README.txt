@@ -13,15 +13,15 @@ The ASMS01.CAB slipstreamer for nLite'd Windows XP/2003 x64.
    - ASMS01.cab (Must be SP2 version)
    - cabarc.exe (You can get this from Windows XP Support Tools, or just
                  Google it.)
-   - WindowsServer2003.WindowsXP-KB2296011-x64-ENU.exe
    - WindowsServer2003.WindowsXP-KB2638806-x64-ENU.exe
    - WindowsServer2003.WindowsXP-KB2834886-x64-ENU.exe
+   - WindowsServer2003.WindowsXP-KB2864058-x64-ENU.exe
 5. Run update_asms01_cab.cmd. The script will tell you what to do next.
 
 == About ==
 
 Update_asms01_cab.cmd is a tool that can help you directly integrate the
-three updates (KB2296011, KB2638806, and KB2834886) into the Windows XP/2003
+three updates (KB2638806, KB2834886, and KB2864058) into the Windows XP/2003
 x64 installation disc. This tool is designed to be used with nLite. It simply
 does what nLite fails to do, which is to integrate these updates.
 
@@ -30,7 +30,7 @@ http://www.msfn.org/board/topic/156867-files-in-asms-folder-are-not-integrated-b
 
 == License ==
 
-Copyright (C) 2012 Kang-Che "Explorer" Sung <explorer09 @ gmail.com>
+Copyright (C) 2012-2013 Kang-Che "Explorer" Sung <explorer09 @ gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
