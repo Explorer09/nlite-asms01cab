@@ -408,6 +408,9 @@ SET hasWarnings=false
     ) ELSE (
         TYPE ..\filelists\winhttp.txt >>asms01.list
     )
+    REM Sort the file list before making ASMS01.CAB.
+    sort asms01.list /O asms01-sorted.list
+    MOVE /Y asms01-sorted.list asms01.list
 
     ECHO.
     ECHO Making cabinets...
