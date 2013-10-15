@@ -338,7 +338,7 @@ SET hasWarnings=false
             ECHO manifests\!COMCTL6_MSFT_X86!.manifest
             ECHO setuppolicies\!COMCTL5_POLICY_X64!\!COMCTL5_VERSION!.policy
             ECHO setuppolicies\!COMCTL6_POLICY_X64!\!COMCTL6_VERSION!.policy
-            ECHO setuppolicies\!COMCTL5_POLICY_X86!\COMCTL5_VERSION!.policy
+            ECHO setuppolicies\!COMCTL5_POLICY_X86!\!COMCTL5_VERSION!.policy
             ECHO setuppolicies\!COMCTL6_POLICY_X86!\!COMCTL6_VERSION!.policy
             ECHO policies\!COMCTL5_POLICY_X64!\!COMCTL5_VERSION!.cat
             ECHO policies\!COMCTL5_POLICY_X64!\!COMCTL5_VERSION!.policy
