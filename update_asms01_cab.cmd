@@ -262,7 +262,7 @@ SET hasWarnings=false
         MOVE SP2QFE\asms\x86\60\!midPath!\controls.man         WinSxS\manifests\!COMCTL6_MSFT_X86!.manifest
         COPY SP2QFE\asms\582\policy\!midPath!\controls.man     WinSxS\setuppolicies\!COMCTL5_POLICY_X64!\!COMCTL5_VERSION!.policy
         COPY SP2QFE\asms\60\policy\!midPath!\controls.man      WinSxS\setuppolicies\!COMCTL6_POLICY_X64!\!COMCTL6_VERSION!.policy
-        COPY SP2QFE\asms\x86\582\policy\!midPath!\controls.man WinSxS\setuppolicies\!COMCTL5_POLICY_X86!\COMCTL5_VERSION!.policy
+        COPY SP2QFE\asms\x86\582\policy\!midPath!\controls.man WinSxS\setuppolicies\!COMCTL5_POLICY_X86!\!COMCTL5_VERSION!.policy
         COPY SP2QFE\asms\x86\60\policy\!midPath!\controls.man  WinSxS\setuppolicies\!COMCTL6_POLICY_X86!\!COMCTL6_VERSION!.policy
         MOVE SP2QFE\asms\582\policy\!midPath!\controls.cat     WinSxS\policies\!COMCTL5_POLICY_X64!\!COMCTL5_VERSION!.cat
         MOVE SP2QFE\asms\582\policy\!midPath!\controls.man     WinSxS\policies\!COMCTL5_POLICY_X64!\!COMCTL5_VERSION!.policy
