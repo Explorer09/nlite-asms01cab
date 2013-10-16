@@ -2,7 +2,7 @@
 SETLOCAL EnableExtensions EnableDelayedExpansion
 
 REM ---------------------------------------------------------------------------
-REM Copyright (C) 2012 Kang-Che Sung <explorer09 @ gmail.com>
+REM Copyright (C) 2012-2013 Kang-Che Sung <explorer09 @ gmail.com>
 
 REM This program is free software; you can redistribute it and/or
 REM modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@ CALL set_global_vars.cmd
 POPD
 
 SET hasErrors=false
-SET hasWarnings=false
 
 :intro
     IF "!LANG!"=="NOT_SET_YET" (
@@ -67,13 +66,13 @@ SET hasWarnings=false
         ini_maker\addreg_winhttp.cmd
         ini_maker\write_entries_ini.cmd
     ) DO (
-        IF NOT EXIST %%f (
+        IF NOT EXIST "%%f" (
             ECHO ERROR: This script requires the file "%%f".
             SET hasErrors=true
         )
     )
-    IF NOT EXIST ASMS01.CAB (
-        IF EXIST ASMS01_old.cab (
+    IF NOT EXIST "ASMS01.CAB" (
+        IF EXIST "ASMS01_old.cab" (
             MOVE ASMS01_old.cab ASMS01.CAB
         ) ELSE (
             ECHO ERROR: This script requires the file "ASMS01.CAB".
@@ -87,8 +86,8 @@ SET hasWarnings=false
         addon_!GDIPLUS_UPDATE_ID!.cab
         addon_!WINHTTP_UPDATE_ID!.cab
     ) DO (
-        IF EXIST %%f (
-            ECHO ERROR: Please move the file "%%f" away.
+        IF EXIST "%%f" (
+            ECHO ERROR: Please delete the file "%%f" or move it away.
             SET hasErrors=true
         )
     )
@@ -103,7 +102,6 @@ SET hasWarnings=false
     )
     SET activeCodePage=!activeCodePage:~-3,3!
     IF NOT "!activeCodePage!"=="!DOS_CODEPAGE!" (
-        SET hasWarnings=true
         ECHO WARNING: Your active code page ^(!activeCodePage!^) does not match the recommended code page
         ECHO for your language ^(!DOS_CODEPAGE!^).
         ECHO.
@@ -145,19 +143,25 @@ SET hasWarnings=false
 :start
     MKDIR work_dir
     MKDIR work_dir\WinSxS
+
+    IF NOT "!activeCodePage!"=="!DOS_CODEPAGE!" (
+        ECHO WARNING: Your active code page ^(!activeCodePage!^) does not match the recommended code page
+        ECHO for your language ^(!DOS_CODEPAGE!^).
+    )>>work_dir\warnings.txt
+
     ECHO.
     ECHO Extracting updates...
-    IF EXIST !COMCTL_UPDATE_FILE! (
+    IF EXIST "!COMCTL_UPDATE_FILE!" (
         ECHO !COMCTL_UPDATE_FILE!
         SET hasComCtlUpdate=true
         START /wait !COMCTL_UPDATE_FILE! /extract:work_dir /passive
     )
-    IF EXIST !GDIPLUS_UPDATE_FILE! (
+    IF EXIST "!GDIPLUS_UPDATE_FILE!" (
         ECHO !GDIPLUS_UPDATE_FILE!
         SET hasGdiPlusUpdate=true
         START /wait !GDIPLUS_UPDATE_FILE! /extract:work_dir /passive
     )
-    If EXIST !WINHTTP_UPDATE_FILE! (
+    If EXIST "!WINHTTP_UPDATE_FILE!" (
         ECHO !WINHTTP_UPDATE_FILE!
         SET hasWinHttpUpdate=true
         START /wait !WINHTTP_UPDATE_FILE! /extract:work_dir /passive
@@ -194,7 +198,7 @@ SET hasWarnings=false
             WinSxS\setuppolicies\!COMCTL6_POLICY_X64!
             WinSxS\setuppolicies\!COMCTL6_POLICY_X86!
         ) DO (
-            IF NOT EXIST %%d MKDIR %%d
+            IF NOT EXIST "%%d" MKDIR %%d
         )
     )
     IF "!hasGdiPlusUpdate!"=="true" (
@@ -208,7 +212,7 @@ SET hasWarnings=false
             WinSxS\setuppolicies\!GDIPLUS_POLICY_X64!
             WinSxS\setuppolicies\!GDIPLUS_POLICY_X86!
         ) DO (
-            IF NOT EXIST %%d MKDIR %%d
+            IF NOT EXIST "%%d" MKDIR %%d
         )
     )
     IF "!hasWinHttpUpdate!"=="true" (
@@ -222,7 +226,7 @@ SET hasWarnings=false
             WinSxS\setuppolicies\!WINHTTP_POLICY_X64!
             WinSxS\setuppolicies\!WINHTTP_POLICY_X86!
         ) DO (
-            IF NOT EXIST %%d MKDIR %%d
+            IF NOT EXIST "%%d" MKDIR %%d
         )
     )
 
@@ -354,7 +358,7 @@ SET hasWarnings=false
             ECHO comctl32.dll
             ECHO SVCPACK\!COMCTL_UPDATE_ID!.cat
             ECHO entries_!COMCTL_UPDATE_ID!.ini
-        )>>addon_!COMCTL_UPDATE_ID!.list
+        )>addon_!COMCTL_UPDATE_ID!.list
     ) ELSE (
         TYPE ..\filelists\comctl.txt >>asms01.list
     )
@@ -379,7 +383,7 @@ SET hasWarnings=false
         (
             ECHO SVCPACK\!GDIPLUS_UPDATE_ID!.cat
             ECHO entries_!GDIPLUS_UPDATE_ID!.ini
-        )>>addon_!GDIPLUS_UPDATE_ID!.list
+        )>addon_!GDIPLUS_UPDATE_ID!.list
     ) ELSE (
         TYPE ..\filelists\gdiplus.txt >>asms01.list
     )
@@ -404,57 +408,56 @@ SET hasWarnings=false
         (
             ECHO SVCPACK\!WINHTTP_UPDATE_ID!.cat
             ECHO entries_!WINHTTP_UPDATE_ID!.ini
-        )>>addon_!WINHTTP_UPDATE_ID!.list
+        )>addon_!WINHTTP_UPDATE_ID!.list
     ) ELSE (
         TYPE ..\filelists\winhttp.txt >>asms01.list
     )
     REM Sort the file list before making ASMS01.CAB.
-    sort asms01.list /O asms01-sorted.list
-    MOVE /Y asms01-sorted.list asms01.list
+    sort asms01.list /O temp.list
+    MOVE /Y temp.list asms01.list
 
     ECHO.
     ECHO Making cabinets...
     (
         CD WinSxS
-        CALL :stripMissingFiles ..\asms01.list ..\temp.list
+        CALL :stripMissingFiles ..\asms01.list ..\temp.list ..\missing.list
+        MOVE /Y ..\temp.list ..\asms01.list
+        IF EXIST "..\missings.list" (
+            CALL :missingFilesWarning ..\missing.list ASMS01.CAB
+            CALL :missingFilesWarning ..\missing.list ASMS01.CAB >>warnings.txt
+        )
+
         REM The compression method of ASMS01.CAB is MSZip, not LZX.
         ..\..\cabarc -p -m MSZip N ..\..\ASMS01_new.cab @..\asms01.list
         CD ..
     )
     IF "!hasComCtlUpdate!"=="true" (
-        CD addon_!COMCTL_UPDATE_ID!
-        CALL :stripMissingFiles ..\addon_!COMCTL_UPDATE_ID!.list ..\temp.list
-        ..\..\cabarc -p -m MSZip N ..\..\addon_!COMCTL_UPDATE_ID!.cab @..\addon_!COMCTL_UPDATE_ID!.list
-        CD ..
+        CALL :makeAddonCab addon_!COMCTL_UPDATE_ID!
     )
     IF "!hasGdiPlusUpdate!"=="true" (
-        CD addon_!GDIPLUS_UPDATE_ID!
-        CALL :stripMissingFiles ..\addon_!GDIPLUS_UPDATE_ID!.list ..\temp.list
-        ..\..\cabarc -p -m MSZip N ..\..\addon_!GDIPLUS_UPDATE_ID!.cab @..\addon_!GDIPLUS_UPDATE_ID!.list
-        CD ..
+        CALL :makeAddonCab addon_!GDIPLUS_UPDATE_ID!
     )
     IF "!hasWinHttpUpdate!"=="true" (
-        CD addon_!WINHTTP_UPDATE_ID!
-        CALL :stripMissingFiles ..\addon_!WINHTTP_UPDATE_ID!.list ..\temp.list
-        ..\..\cabarc -p -m MSZip N ..\..\addon_!WINHTTP_UPDATE_ID!.cab @..\addon_!WINHTTP_UPDATE_ID!.list
-        CD ..
+        CALL :makeAddonCab addon_!WINHTTP_UPDATE_ID!
     )
 
     REM The processes below are no longer in work_dir.
     CD ..
 
-    ECHO.
-    ECHO Cleaning up...
-    RMDIR /s /q work_dir
-
 GOTO finished
 
 :finished
     CLS
-    IF "!hasWarnings!"=="true" (
+    IF EXIST "work_dir\warnings.txt" (
         ECHO.
         ECHO There are warnings during the process.
+        ECHO.
+        TYPE "work_dir\warnings.txt"
     )
+    ECHO.
+    ECHO Cleaning up...
+    RMDIR /s /q work_dir
+
     ECHO.
     ECHO All done.
     ECHO.
@@ -489,21 +492,52 @@ GOTO :EOF
 REM /**
 REM  * Strip the missing file name in the file list.
 REM  *
-REM  * Re-contruct the file-list specified in %1 to remove the file names that
-REM  * are missing.
-REM  * @param %1 File list.
-REM  * @param %2 Temporary file to store the file names.
+REM  * Detect if every file in the list specified in %1 exists and output the
+REM  * list of files that exist and the list that don't.
+REM  * @param %1 Original list file.
+REM  * @param %2 Output list with only file names that exist.
+REM  * @param %3 Output list with file names that are missing.
 REM  */
 :stripMissingFiles
     DEL %2
+    DEL %3
     FOR /F "delims=" %%f IN (%1) DO (
-        IF EXIST %%f (
+        IF EXIST "%%f" (
             ECHO>>%2 %%f
         ) ELSE (
-            ECHO WARNING: File "%%f" does not exist. Skipping.
-            SET hasWarnings=true
+            ECHO>>%3 %%f
         )
     )
-    MOVE /Y %2 %1
 GOTO :EOF
 
+REM /**
+REM  * Displays warning messages about missing files when making cabinets.
+REM  * @param %1 List of files that are missing.
+REM  * @param %2 In which cabinet file.
+REM  */
+:missingFilesWarning
+    ECHO WARNING: The following files do not exist in %2:
+    TYPE %1
+    ECHO.
+GOTO :EOF
+
+REM /**
+REM  * Create addon cabinet for nLite.
+REM  *
+REM  * This function is called when current directory is "work_dir".
+REM  * Create a cabinet named "..\NAME.cab", with the files located in
+REM  * "NAME" directory and whose names are listed in "work_dir\NAME.list".
+REM  * Temporary files used by this function: temp.list missing.list
+REM  * @param %1 Name of the addon cabinet file.
+REM  */
+:makeAddonCab
+    CD %1
+    CALL :stripMissingFiles ..\%1.list ..\temp.list ..\missing.list
+    MOVE /Y ..\temp.list ..\%1.list
+    IF EXIST "..\missings.list" (
+        CALL :missingFilesWarning ..\missing.list %1.cab
+        CALL :missingFilesWarning ..\missing.list %1.cab >>warnings.txt
+    )
+    ..\..\cabarc -p -m MSZip N ..\..\%1.cab @..\%1.list
+    CD ..
+GOTO :EOF
