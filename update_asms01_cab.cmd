@@ -422,9 +422,9 @@ SET hasErrors=false
         CD WinSxS
         CALL :stripMissingFiles ..\asms01.list ..\temp.list ..\missing.list
         MOVE /Y ..\temp.list ..\asms01.list
-        IF EXIST "..\missings.list" (
+        IF EXIST "..\missing.list" (
             CALL :missingFilesWarning ..\missing.list ASMS01.CAB
-            CALL :missingFilesWarning ..\missing.list ASMS01.CAB >>warnings.txt
+            CALL :missingFilesWarning ..\missing.list ASMS01.CAB >>..\warnings.txt
         )
 
         REM The compression method of ASMS01.CAB is MSZip, not LZX.
@@ -534,9 +534,9 @@ REM  */
     CD %1
     CALL :stripMissingFiles ..\%1.list ..\temp.list ..\missing.list
     MOVE /Y ..\temp.list ..\%1.list
-    IF EXIST "..\missings.list" (
+    IF EXIST "..\missing.list" (
         CALL :missingFilesWarning ..\missing.list %1.cab
-        CALL :missingFilesWarning ..\missing.list %1.cab >>warnings.txt
+        CALL :missingFilesWarning ..\missing.list %1.cab >>..\warnings.txt
     )
     ..\..\cabarc -p -m MSZip N ..\..\%1.cab @..\%1.list
     CD ..
