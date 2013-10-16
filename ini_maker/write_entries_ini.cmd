@@ -41,15 +41,20 @@ POPD
 IF /I "%component%"=="comctl" (
     SET installedEntryIsOptional=true
     SET SP_SHORT_TITLE=%COMCTL_UPDATE_ID%
+    SET REPLACED_UPDATES=%COMCTL_REPLACED_UPDATES%
 ) ELSE IF /I "%component%"=="gdiplus" (
     SET installedEntryIsOptional=false
     SET SP_SHORT_TITLE=%GDIPLUS_UPDATE_ID%
+    SET REPLACED_UPDATES=%GDIPLUS_REPLACED_UPDATES%
 ) ELSE IF /I "%component%"=="winhttp" (
     SET installedEntryIsOptional=false
     SET SP_SHORT_TITLE=%WINHTTP_UPDATE_ID%
+    SET REPLACED_UPDATES=%WINHTTP_REPLACED_UPDATES%
 ) ELSE (
     GOTO end
 )
+
+IF /I "%REPLACED_UPDATES%"=="none" SET REPLACED_UPDATES=
 
 REM Note: The localized_strings.cmd requires the %SP_SHORT_TITLE% variable.
 CALL ..\global_vars\%LANG%\localized_strings_%LANG%.cmd
@@ -72,11 +77,21 @@ IF NOT EXIST addreg_%component%.cmd GOTO end
     IF NOT "%installedEntryIsOptional%"=="true" (
         ECHO.
         ECHO HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\Hotfix\%SP_SHORT_TITLE%,"Installed",0x10001,1
+        FOR %%i IN (%REPLACED_UPDATES%) DO (
+            ECHO.
+            ECHO ; The %%i update is obsolete, but Windows Update will still offer to install it.
+            ECHO ; Because Microsoft sometimes don't admit that %%i is superseded by %SP_SHORT_TITLE%.
+            ECHO HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\Hotfix\%%i,"Installed",0x10001,1
+        )
     )
     IF NOT "%stripOptionalEntries%"=="YES" (
         ECHO.
         ECHO ; The lines below can be removed if you want the minimum registry overhead.
         IF "%installedEntryIsOptional%"=="true" (
+            FOR %%i IN (%REPLACED_UPDATES%) DO (
+                ECHO ; The %%i update is replaced by %SP_SHORT_TITLE%.
+                ECHO HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\Hotfix\%%i,"Installed",0x10001,1
+            )
             ECHO HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\Hotfix\%SP_SHORT_TITLE%,"Installed",0x10001,1
         )
         ECHO HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\Hotfix\%SP_SHORT_TITLE%,"Backup Dir",0,""

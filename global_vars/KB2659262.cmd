@@ -10,3 +10,8 @@ SET GDIPLUS_VERSION=5.1.6002.22791
 REM The registry key names of the policy files.
 SET GDIPLUS_POLICY_X64_KEY=amd64_policy.1.0.Microsoft.Windows.GdiPlus_6595b64144ccf1df_5.1.6002.22791_x-ww_DFCD8D4F
 SET GDIPLUS_POLICY_X86_KEY=x86_policy.1.0.Microsoft.Windows.GdiPlus_6595b64144ccf1df_5.1.6002.22791_x-ww_ADC3A76F
+
+REM The list of updates that this one supersedes, separated by spaces.
+REM Except for COMCTL, Windows Update will still offer the obsolete updates,
+REM because they don't admit the replacement.
+SET GDIPLUS_REPLACED_UPDATES=none

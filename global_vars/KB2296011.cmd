@@ -15,3 +15,8 @@ SET COMCTL5_POLICY_X64_KEY=amd64_policy.5.82.Microsoft.Windows.Common-Controls_6
 SET COMCTL6_POLICY_X64_KEY=amd64_policy.6.0.Microsoft.Windows.Common-Controls_6595b64144ccf1df_6.0.3790.4770_x-ww_7B3D68CC
 SET COMCTL6_POLICY_X86_KEY=wow64_policy.6.0.Microsoft.Windows.Common-Controls_6595b64144ccf1df_6.0.3790.4770_x-ww_D063C3E5
 SET COMCTL5_POLICY_X86_KEY=x86_policy.5.82.Microsoft.Windows.Common-Controls_6595b64144ccf1df_5.82.3790.4770_x-ww_6F591A9A
+
+REM The list of updates that this one supersedes, separated by spaces.
+REM Except for COMCTL, Windows Update will still offer the obsolete updates,
+REM because they don't admit the replacement.
+SET COMCTL_REPLACED_UPDATES=none
