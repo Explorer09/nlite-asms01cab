@@ -129,10 +129,10 @@ SET hasErrors=false
         ECHO Old files will be deleted.
     )
     SET /p prompt="Preserve the optional registry entries in the INI files (recommended) [Y/n]? "
-    SET stripOptionalEntries=NO
-    IF /I "!prompt!"=="N" SET stripOptionalEntries=YES
-    IF /I "!prompt!"=="NO" SET stripOptionalEntries=YES
-    IF "!stripOptionalEntries!"=="NO" (
+    SET optionalEntries=keep
+    IF /I "!prompt!"=="N" SET optionalEntries=remove
+    IF /I "!prompt!"=="NO" SET optionalEntries=remove
+    IF "!optionalEntries!"=="keep" (
         ECHO The optional registry entries will be preserved.
     ) ELSE (
         ECHO The optional registry entries will be stripped.
@@ -234,17 +234,17 @@ SET hasErrors=false
     ECHO Generating INI files for nLite addon...
     IF "!hasComCtlUpdate!"=="true" (
         PUSHD ..\ini_maker >NUL
-        CALL write_entries_ini.cmd comctl !stripOptionalEntries!
+        CALL write_entries_ini.cmd comctl !optionalEntries!
         POPD >NUL
     ) >entries_!COMCTL_UPDATE_ID!.ini
     IF "!hasGdiPlusUpdate!"=="true" (
         PUSHD ..\ini_maker >NUL
-        CALL write_entries_ini.cmd gdiplus !stripOptionalEntries!
+        CALL write_entries_ini.cmd gdiplus !optionalEntries!
         POPD >NUL
     ) >entries_!GDIPLUS_UPDATE_ID!.ini
     IF "!hasWinHttpUpdate!"=="true" (
         PUSHD ..\ini_maker >NUL
-        CALL write_entries_ini.cmd winhttp !stripOptionalEntries!
+        CALL write_entries_ini.cmd winhttp !optionalEntries!
         POPD >NUL
     ) >entries_!WINHTTP_UPDATE_ID!.ini
 

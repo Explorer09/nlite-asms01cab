@@ -2,7 +2,7 @@
 SETLOCAL EnableExtensions
 
 REM ---------------------------------------------------------------------------
-REM Copyright (C) 2012 Kang-Che Sung <explorer09 @ gmail.com>
+REM Copyright (C) 2012-2013 Kang-Che Sung <explorer09 @ gmail.com>
 
 REM This program is free software; you can redistribute it and/or
 REM modify it under the terms of the GNU General Public License
@@ -26,14 +26,13 @@ REM  *
 REM  * The language, OS, and the update IDs are fetched from the global variables.
 REM  *
 REM  * @param %1 Component. The value must be "comctl", "gdiplus", or "winhttp" (without quotes)
-REM  * @param %2 Set this to "yes" to strip the optional registry entries.
+REM  * @param %2 Set this to "keep" or "remove" to keep or remove the optional registry entries.
 REM  */
 
 SET buildDate=2012-11-22
 SET component=%1
-SET stripOptionalEntries=%2
-IF /I "%stripOptionalEntries%"=="Y" SET stripOptionalEntries=YES
-IF /I "%stripOptionalEntries%"=="YES" SET stripOptionalEntries=YES
+SET optionalEntries=%2
+IF /I "%optionalEntries%"=="remove" SET optionalEntries=remove
 
 PUSHD ..\global_vars
 CALL set_global_vars.cmd
@@ -84,7 +83,7 @@ IF NOT EXIST addreg_%component%.cmd GOTO end
             ECHO HKLM,SOFTWARE\Microsoft\Windows NT\CurrentVersion\Hotfix\%%i,"Installed",0x10001,1
         )
     )
-    IF NOT "%stripOptionalEntries%"=="YES" (
+    IF NOT "%optionalEntries%"=="remove" (
         ECHO.
         ECHO ; The lines below can be removed if you want the minimum registry overhead.
         IF "%installedEntryIsOptional%"=="true" (
