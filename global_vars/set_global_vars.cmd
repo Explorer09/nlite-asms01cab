@@ -11,7 +11,9 @@ SET OS_TAG=NOT_SET_YET
 
 REM The KB identifiers of the updates.
 SET COMCTL_UPDATE_ID=KB2864058
-SET GDIPLUS_UPDATE_ID=KB2834886
+REM KB4012583 (MS17-013) is not offered in Windows Update but offered in this
+REM advisory: https://support.microsoft.com/en-us/help/4025687/
+SET GDIPLUS_UPDATE_ID=KB4012583
 SET WINHTTP_UPDATE_ID=KB2638806
 
 REM -------------------------------------------------------------------------
@@ -33,7 +35,11 @@ SET WINHTTP_POLICY_X86=x86_policy.5.1.Microsoft.Windows.WinHTTP_6595b64144ccf1df
 
 REM File names of the updates.
 SET COMCTL_UPDATE_FILE=WindowsServer2003.WindowsXP-%COMCTL_UPDATE_ID%-x64-%LANG%.exe
-SET GDIPLUS_UPDATE_FILE=WindowsServer2003.WindowsXP-%GDIPLUS_UPDATE_ID%-x64-%LANG%.exe
+IF "%GDIPLUS_UPDATE_ID%"=="KB4012583" (
+    SET GDIPLUS_UPDATE_FILE=WindowsServer2003-%GDIPLUS_UPDATE_ID%-x64-custom-%LANG%.exe
+) ELSE (
+    SET GDIPLUS_UPDATE_FILE=WindowsServer2003.WindowsXP-%GDIPLUS_UPDATE_ID%-x64-%LANG%.exe
+)
 SET WINHTTP_UPDATE_FILE=WindowsServer2003.WindowsXP-%WINHTTP_UPDATE_ID%-x64-%LANG%.exe
 
 IF "%OS_TAG%"=="XP" (
